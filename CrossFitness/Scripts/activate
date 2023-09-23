@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\terranom\source\repos\terranovamt\CrossFitnessPy\CrossFitness"
+VIRTUAL_ENV="C:\Users\terranom\OneDrive - STMicroelectronics\Desktop\prj\TRASK\CrossFitnessPy\CrossFitness"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

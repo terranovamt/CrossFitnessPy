@@ -5,6 +5,9 @@ def func(x):
 def add (x,y):
     return x + y
 
+def meas (x,y):
+    return x - y
+
 def main():
     print('HelloWord')
     return 0

@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\terranom\source\repos\terranovamt\CrossFitnessPy\CrossFitness
+set VIRTUAL_ENV=C:\Users\terranom\OneDrive - STMicroelectronics\Desktop\prj\TRASK\CrossFitnessPy\CrossFitness
 
 if not defined PROMPT set PROMPT=$P$G
 
