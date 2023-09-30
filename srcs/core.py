@@ -1,61 +1,34 @@
-import matplotlib.pyplot as plt
+import plot as plt
 import requests
-from tkinter import filedialog as fd
 
-
-def plot(reservation):
-    
-    fig, ax = plt.subplots()
-
-    lesson = ['Acro Yoga','Functional','Crossfit','Yoga' ]
-    counts = [1,0,2,0]
-    # bar_labels = ['red']
-    # bar_colors = ['tab:red']
-
-    # ax.bar(lesson, counts, label=bar_labels, color=bar_colors)
-
-    # ax.set_ylabel('fruit supply')
-    # ax.set_title('Fruit supply by kind and color')
-    # ax.legend(title='Fruit color')
-
-    # plt.show()
-
-    # lesson = ['apple', 'blueberry', 'cherry', 'orange']
-    # counts = [40, 100, 30, 55]
-    bar_labels = ['red', 'blue', 'green', 'orange']
-    bar_colors = ['tab:red', 'tab:blue', 'tab:green', 'tab:orange']
-
-    ax.bar(lesson, counts, label=bar_labels, color=bar_colors)
-    ax.scatter(lesson, counts)
-
-    ax.plot(lesson, counts)
-
-    ax.set_xlabel('Lunedì')
-    ax.set_title('LEZIONI')
-
-    plt.show()
-
-def files():
-  filenames =  fd.askopenfilenames(filetypes=[('Memebr','*.txt')])
-  return filenames
+def toNumberDay(weekday):
+    if weekday == "Lunedi'":
+        return 1
+    if weekday == "Martedi'":
+        return 2
+    if weekday == "Mercoledi'":
+        return 3
+    if weekday == "Giovedi'":
+        return 4
+    if weekday == "Venerdi'":
+        return 5
+    if weekday == "Sabato":
+        return 6
+    if weekday == "Domenica":
+        return 7
 
 def datapipeline(reservation,filenames):
-
-
     for filename in filenames : 
         try:
             fin = open(filename, 'rt')
         except FileNotFoundError:
             print('>>> FileNotFound ERROR: check path or exension of file')
 
-
-        member_name = filename.split('/')[9][:-4]
-        print(member_name)
         for line in fin:
-            words=line[:-1].split('|')
-            in_lesson = words[0]
-            day=int(words[1][0:1])
-            hour=int(words[1][1:3])
+            lineword = line.split(" ")
+            day = toNumberDay(lineword[0])
+            hour = int(lineword[len(lineword)-1][:-1])
+            in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
             for lesson in reservation[day]:
                 try:
                     if lesson[hour] == in_lesson:
@@ -63,45 +36,81 @@ def datapipeline(reservation,filenames):
                         break
                 except Exception:
                     pass
-        return(reservation)
-
+        
+    return(reservation)
 
 def init():
-    # request = requests.get('http://example.com/foo/bar')
-    # print(request.status_code)
-    # print(request.headers)
-    # print(request.content)  # bytes
-    # print(request.text)     # r.c``ontent as str
-    # reservation = dict(request.text)
-    reservation ={
-        1 : [
-            {8 : 'Yoga', 'counter' : 0},
-            {10 : 'Crossfit', 'counter' : 0}
-             ],
-        2 : [
-            {10 : 'Yoga', 'counter' : 0},
-            {16 : 'Crossfit Class', 'counter' : 0}
-             ],
-        3 : [
-            {14 : 'Yoga', 'counter' : 0}
-             ],
-        5 : [
-            {16 : 'Crossfit Class', 'counter' : 0}
-            ]
-    }
-    print(reservation.keys())
-    print(type(list(reservation.keys())[2]))
-    return reservation
+
+    reservation={}
+    request = requests.get('http://localhost:60080/lezioni')
+    if request.status_code == 200: 
+
+        for lessonLine in request.text.split("\n"):
+            if len(lessonLine) > 1:
+                lineword = lessonLine.split(" ")
+                day = toNumberDay(lineword[0])
+                hour = int(lineword[len(lineword)-1])
+                lessonName = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+                if day in list(reservation.keys()) :
+                    reservation[day].append({hour:lessonName,'counter':0})
+                elif len(list(reservation.keys())) != 0 :
+                    reservation[day]=[
+                                        {hour:lessonName,
+                                        'counter':0}
+                                    ]
+                else:
+                    reservation = { day:[
+                                        {hour:lessonName,
+                                        'counter':0}
+                                    ]
+                                }
+        return reservation
+
+def getPrenotated(reservation):
+    request = requests.get('http://localhost:60080/reservation')
+    if request.status_code == 200: 
+        for line in request.text.split("\n"):
+            if len(line) > 1:
+                lineword = line.split(" ")
+                day = toNumberDay(lineword[0])
+                hour = int(lineword[len(lineword)-1])
+                in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+                for lesson in reservation[day]:
+                    try:
+                        if lesson[hour] == in_lesson:
+                            lesson['counter'] = lesson['counter'] + 1
+                            break
+                    except Exception:
+                        pass
+    return(reservation)
 
 
-
-def main():
+def computeChar():
+    print('START')
     reservation = init()
-    table = files()
-    reservation = datapipeline(reservation,table)
-    plot(reservation)
+    reservation = getPrenotated(reservation)
+    plt.plot(reservation)
     print('END')
     return 0
 
+def getReservation(users):
+    reservation = init()
+    request = requests.get('http://localhost:60080/reservation/'+users)
+    if request.status_code == 200: 
+        for line in request.text.split("\n"):
+            if len(line) > 1:
+                lineword = line.split(" ")
+                day = toNumberDay(lineword[0])
+                hour = int(lineword[len(lineword)-1])
+                in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+                for lesson in reservation[day]:
+                    try:
+                        if lesson[hour] == in_lesson:
+                            lesson['counter'] = lesson['counter'] + 1
+                            break
+                    except Exception:
+                        pass
+    return(reservation)
+
 if __name__ =='__main__':
-    main()
+    computeChar()
