@@ -123,13 +123,53 @@ class App(customtkinter.CTk):
         self.user_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.user_frame_button_1 = customtkinter.CTkButton(
             self.user_frame, 
-            text="Compute Analytics",
+            text="Get reservation",
             command=self.getReservation)
         self.user_frame_button_1.grid(
-            row=1, 
-            column=0, 
+            row=0, 
+            column=3, 
             padx=20, 
             pady=20)
+        self.user_frame_textbox = customtkinter.CTkTextbox(
+            self.user_frame, 
+            width=150,
+            height=20,
+            activate_scrollbars=False
+            )
+        self.user_frame_textbox.grid(
+            row=0,
+            column=2, 
+            padx=(0, 0), 
+            pady=(0, 0))
+        self.tooltips_frame_textbox = customtkinter.CTkTextbox(
+            self.user_frame, 
+            width=120,
+            height=50,
+            activate_scrollbars=False,
+            fg_color="transparent"
+            )
+        self.tooltips_frame_textbox.grid(
+            row=0,
+            column=1, 
+            padx=(0, 0), 
+            pady=(20, 0)
+            )
+        self.tooltips_frame_textbox.insert("0.5", "Insert Username: ")
+        self.output_frame_textbox = customtkinter.CTkTextbox(
+            self.user_frame, 
+            width=500,
+            height=500,
+            activate_scrollbars=False,
+            fg_color="transparent"
+            )
+        self.output_frame_textbox.grid(
+            row=1,
+            column=0, 
+            columnspan=4,
+            padx=(0, 0), 
+            pady=(20, 0)
+            )
+
 
         # select default frame
         self.select_frame_by_name("home")
@@ -168,7 +208,11 @@ class App(customtkinter.CTk):
         self.select_frame_by_name("user")
 
     def getReservation(self):
-        print(core.getReservation("Matteo"))
+        response = ""
+        self.output_frame_textbox.delete("0.5",customtkinter.END)
+        user = self.user_frame_textbox.get(0.1,customtkinter.END)
+        response = core.getReservation(user[:-1])
+        self.output_frame_textbox.insert("0.5", response)
 
 def main():
     app = App()

@@ -82,7 +82,7 @@ def getPrenotated(reservation):
                             break
                     except Exception:
                         pass
-    return(reservation)
+        return(reservation)
 
 
 def computeChar():
@@ -94,23 +94,9 @@ def computeChar():
     return 0
 
 def getReservation(users):
-    reservation = init()
     request = requests.get('http://localhost:60080/reservation/'+users)
     if request.status_code == 200: 
-        for line in request.text.split("\n"):
-            if len(line) > 1:
-                lineword = line.split(" ")
-                day = toNumberDay(lineword[0])
-                hour = int(lineword[len(lineword)-1])
-                in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
-                for lesson in reservation[day]:
-                    try:
-                        if lesson[hour] == in_lesson:
-                            lesson['counter'] = lesson['counter'] + 1
-                            break
-                    except Exception:
-                        pass
-    return(reservation)
+        return request.text
 
 if __name__ =='__main__':
     computeChar()

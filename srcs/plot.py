@@ -32,12 +32,13 @@ def plot(reservation):
 
     list_ax=[ax[0][0],ax[1][0],ax[2][0],ax[0][1],ax[1][1],ax[2][1]]
     
-    c = ['red', 'blue', 'yellow', 'green', 'orange', 'purple']
+    c = ['#007542', '#1e8c45', '#58bb43', '#78d23d', '#9be931', '#c1ff1c']
    
     for key in x:
-        list_ax[key-1].bar(x[key], y[key])#, color = c[0:len(x[key])])
-        list_ax[key-1].plot(x[key], y[key],color="red")
-        list_ax[key-1].scatter(x[key], y[key])
+        list_ax[key-1].bar(x[key], y[key], color = c[0:len(x[key])])#
+        # list_ax[key-1].scatter(x[key], y[key],color="#120c6e")
+        # list_ax[key-1].plot(x[key], y[key],color="#5e72eb")
+        list_ax[key-1].plot(x[key], y[key],color="#b7c9e2")
         list_ax[key-1].tick_params(axis="x", labelsize=6)
 
     plt.subplots_adjust(left=0.125,
