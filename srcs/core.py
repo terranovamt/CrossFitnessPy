@@ -17,32 +17,12 @@ def toNumberDay(weekday):
     if weekday == "Domenica":
         return 7
 
-def datapipeline(reservation,filenames):
-    for filename in filenames : 
-        try:
-            fin = open(filename, 'rt')
-        except FileNotFoundError:
-            print('>>> FileNotFound ERROR: check path or exension of file')
-
-        for line in fin:
-            lineword = line.split(" ")
-            day = toNumberDay(lineword[0])
-            hour = int(lineword[len(lineword)-1][:-1])
-            in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
-            for lesson in reservation[day]:
-                try:
-                    if lesson[hour] == in_lesson:
-                        lesson['counter'] = lesson['counter'] + 1
-                        break
-                except Exception:
-                    pass
-        
-    return(reservation)
-
 def init():
-
     reservation={}
-    request = requests.get('http://localhost:60080/lezioni')
+    try:
+        request = requests.get('http://localhost:60080/lezioni')
+    except (Exception):
+        return "Error Request:500"
     if request.status_code == 200: 
 
         for lessonLine in request.text.split("\n"):
@@ -65,9 +45,15 @@ def init():
                                     ]
                                 }
         return reservation
+    else:
+        return "BAD Request:400"
+
 
 def getPrenotated(reservation):
-    request = requests.get('http://localhost:60080/reservation')
+    try:
+        request = requests.get('http://localhost:60080/reservation')
+    except (Exception):
+        return "Error Request:500"
     if request.status_code == 200: 
         for line in request.text.split("\n"):
             if len(line) > 1:
@@ -82,7 +68,9 @@ def getPrenotated(reservation):
                             break
                     except Exception:
                         pass
-        return(reservation)
+        return reservation
+    else:
+        return "BAD Request:400"
 
 
 def computeChar():
@@ -94,9 +82,14 @@ def computeChar():
     return 0
 
 def getReservation(users):
-    request = requests.get('http://localhost:60080/reservation/'+users)
+    try:
+        request = requests.get('http://localhost:60080/reservation/'+users)
+    except (Exception):
+        return "Error Request:500" 
     if request.status_code == 200: 
         return request.text
+    else: 
+        return "BAD Request:400"
 
 if __name__ =='__main__':
     computeChar()

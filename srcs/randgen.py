@@ -38,3 +38,26 @@ for j in range(11):
         lezione = random.choice(lesson)
         fout.write(lezione+'\n')
     fout.close()
+
+
+def datapipeline(reservation,filenames):
+    for filename in filenames : 
+        try:
+            fin = open(filename, 'rt')
+        except FileNotFoundError:
+            print('>>> FileNotFound ERROR: check path or exension of file')
+
+        for line in fin:
+            lineword = line.split(" ")
+            day = toNumberDay(lineword[0])
+            hour = int(lineword[len(lineword)-1][:-1])
+            in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+            for lesson in reservation[day]:
+                try:
+                    if lesson[hour] == in_lesson:
+                        lesson['counter'] = lesson['counter'] + 1
+                        break
+                except Exception:
+                    pass
+        
+    return(reservation)
