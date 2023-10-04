@@ -1,5 +1,6 @@
 import plot as plt
 import requests
+import randgen
 
 def toNumberDay(weekday):
     if weekday == "Lunedi'":
@@ -90,6 +91,14 @@ def getReservation(users):
         return request.text
     else: 
         return "BAD Request:400"
+    
+def main_selfbuild():
+    reservation = randgen.init()
+    randgen.generator()
+    reservation = randgen.datapipeline(reservation)
+    plt.plot(reservation)
+    
+
 
 if __name__ =='__main__':
-    computeChar()
+    main_selfbuild()

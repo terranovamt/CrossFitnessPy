@@ -1,6 +1,24 @@
 import random
+import os
 
-lesson = ["Lunedi' Yoga ore 8",
+def toNumberDay(weekday):
+    if weekday == "Lunedi'":
+        return 1
+    if weekday == "Martedi'":
+        return 2
+    if weekday == "Mercoledi'":
+        return 3
+    if weekday == "Giovedi'":
+        return 4
+    if weekday == "Venerdi'":
+        return 5
+    if weekday == "Sabato":
+        return 6
+    if weekday == "Domenica":
+        return 7
+
+def generator():
+    lesson = ["Lunedi' Yoga ore 8",
 "Lunedi' Crossfit ore 10",
 "Lunedi' Functional ore 12",
 "Lunedi' Yoga ore 14",
@@ -31,33 +49,63 @@ lesson = ["Lunedi' Yoga ore 8",
 "Venerdi' Crossfit ore 16",
 "Venerdi' Functional ore 18"]
 
-for j in range(11):
-    lezioni = []
-    fout = open('./repo/'+str(j)+'.txt', 'wt')
-    for i in range(random.randint(3,11)):
-        lezione = random.choice(lesson)
-        fout.write(lezione+'\n')
-    fout.close()
+    for j in range(25):
+        lezione = []
+        fout = open('./repo/'+"random"+str(j)+'.txt', 'wt')
+        for i in range(random.randint(3,15)):
+            lezione = random.choice(lesson)
+            fout.write(lezione+'\n')
+        fout.close()
 
+def datapipeline(reservation):
+    for filename in os.listdir(os.path.dirname(__file__) + "/../repo") :
+        if filename.startswith("random"):
+            try:
+                fin = open(os.path.dirname(__file__)+ "/../repo/" + filename, 'rt')
+            except FileNotFoundError:
+                print('>>> FileNotFound ERROR: check path or exension of file')
 
-def datapipeline(reservation,filenames):
-    for filename in filenames : 
-        try:
-            fin = open(filename, 'rt')
-        except FileNotFoundError:
-            print('>>> FileNotFound ERROR: check path or exension of file')
-
-        for line in fin:
-            lineword = line.split(" ")
-            day = toNumberDay(lineword[0])
-            hour = int(lineword[len(lineword)-1][:-1])
-            in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
-            for lesson in reservation[day]:
-                try:
-                    if lesson[hour] == in_lesson:
-                        lesson['counter'] = lesson['counter'] + 1
-                        break
-                except Exception:
-                    pass
+            for line in fin:
+                lineword = line.split(" ")
+                day = toNumberDay(lineword[0])
+                hour = int(lineword[len(lineword)-1][:-1])
+                in_lesson = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+                for lesson in reservation[day]:
+                    try:
+                        if lesson[hour] == in_lesson:
+                            lesson['counter'] = lesson['counter'] + 1
+                            break
+                    except Exception:
+                        pass
         
     return(reservation)
+
+def init():
+    reservation={}
+    try:
+        fin = open(os.path.dirname(__file__) + "/../repo/Corsi.txt", 'rt')
+    except (Exception):
+        return "ErrorFile"
+    
+    for lessonLine in fin.readlines():
+        if len(lessonLine) > 1:
+            lineword = lessonLine.split(" ")
+            day = toNumberDay(lineword[0])
+            hour = int(lineword[len(lineword)-1])
+            lessonName = ' '.join(str(element) for element in (lineword[1:len(lineword)-2]))
+            if day in list(reservation.keys()) :
+                reservation[day].append({hour:lessonName,'counter':0})
+            elif len(list(reservation.keys())) != 0 :
+                reservation[day]=[
+                                    {hour:lessonName,
+                                    'counter':0}
+                                ]
+            else:
+                reservation = { day:[
+                                    {hour:lessonName,
+                                    'counter':0}
+                                ]
+                            }
+    return reservation
+
+
