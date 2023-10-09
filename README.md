@@ -3,7 +3,7 @@ Client lato ADMIN dell' applicazione Cross Fitness
 - Grafico Affluenza
 - Visualizzare le prenotazioni del singolo utente 
 
-Non esiste un LOGIN poiche idealmente questo 
+Non esiste un LOGIN poiche idealmente questo Client viene installato sul gestionale della palestra
 
 ## Funzionamento 
 L'applicazione py utilizza delle richieste API/get al server CPP sulla porta:60080
