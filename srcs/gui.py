@@ -214,11 +214,6 @@ class App(customtkinter.CTk):
         response = core.getReservation(user[:-1])
         self.user_frame_output_label.configure(text= response)
 
-def main():
-    app = App()
-    app.mainloop()
-
-
 if __name__ == "__main__":
     app = App()
     app.mainloop()
