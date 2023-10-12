@@ -51,7 +51,7 @@ def generator():
 
     for j in range(25):
         lezione = []
-        fout = open('./repo/'+"random"+str(j)+'.txt', 'wt')
+        fout = open(os.path.dirname(__file__) + "/../repo"+"random"+str(j)+'.txt', 'wt')
         for i in range(random.randint(3,15)):
             lezione = random.choice(lesson)
             fout.write(lezione+'\n')
