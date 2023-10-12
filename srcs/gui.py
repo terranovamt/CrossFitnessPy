@@ -104,6 +104,27 @@ class App(customtkinter.CTk):
         # create home frame
         self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
 
+        self.home_frame_welcome_label = customtkinter.CTkLabel(
+            self.home_frame, 
+            justify=customtkinter.LEFT,
+            fg_color="transparent",
+            text="Cross Fitness\n Buon Lavoro",
+            width=500,
+            height=500,
+            anchor='n',
+            font=customtkinter.CTkFont (
+                size=36, 
+                weight="bold"
+            )
+        )
+
+        self.home_frame_welcome_label.grid(
+            row=0,
+            column=0, 
+            padx=(20, 0), 
+            pady=(20, 0)
+            )
+
         # create analytics frame
         self.analytics_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.analytics_frame.grid_columnconfigure(0, weight=1)
